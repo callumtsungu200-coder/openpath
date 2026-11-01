@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.env
+.env.local
+*.local
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.scrapy/
+*.egg-info/
+.local-pg/
+*.tsbuildinfo
+*.log
+.vercel/

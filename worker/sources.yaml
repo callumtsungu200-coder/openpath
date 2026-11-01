@@ -1,0 +1,101 @@
+# Every source here was checked to respond with real listings on 1 Nov 2026.
+# Greenhouse, Lever and Ashby publish these boards as public JSON APIs.
+# Add a source, then run: openpath sources sync
+#
+# Adapters:
+#   greenhouse / lever / ashby: config.board is the employer's board token
+#   jsonld_crawl: url is a careers listing page; Scrapy follows links and reads
+#                 schema.org JobPosting data. Optional config: link_pattern, max_pages
+#   rendered:     same as jsonld_crawl, but pages are rendered by Playwright first
+#                 (for sites that build their listings with JavaScript)
+#
+# industry is used when a posting does not imply one more strongly.
+
+# The official source for apprenticeships in England. Stays paused until
+# FIND_APPRENTICESHIP_API_KEY is set, then run: openpath sources sync
+- slug: find-an-apprenticeship
+  name: Find an apprenticeship (GOV.UK)
+  adapter: gov_apprenticeships
+  url: https://www.findapprenticeship.service.gov.uk
+  requires_env: FIND_APPRENTICESHIP_API_KEY
+  config: { page_size: 100 }
+- slug: monzo
+  name: Monzo careers
+  adapter: greenhouse
+  url: https://monzo.com/careers
+  config: { board: monzo }
+  company_name: Monzo
+  company_url: https://monzo.com
+  industry: Finance & Banking
+- slug: deliveroo
+  name: Deliveroo careers
+  adapter: greenhouse
+  url: https://careers.deliveroo.co.uk
+  config: { board: deliveroo }
+  company_name: Deliveroo
+  company_url: https://deliveroo.co.uk
+  industry: Technology
+- slug: gocardless
+  name: GoCardless careers
+  adapter: greenhouse
+  url: https://gocardless.com/about/careers
+  config: { board: gocardless }
+  company_name: GoCardless
+  company_url: https://gocardless.com
+  industry: Finance & Banking
+- slug: sumup
+  name: SumUp careers
+  adapter: greenhouse
+  url: https://www.sumup.com/careers
+  config: { board: sumup }
+  company_name: SumUp
+  company_url: https://www.sumup.com
+  industry: Finance & Banking
+- slug: imc
+  name: IMC Trading careers
+  adapter: greenhouse
+  url: https://www.imc.com/eu/careers
+  config: { board: imc }
+  company_name: IMC Trading
+  company_url: https://www.imc.com
+  industry: Finance & Banking
+- slug: palantir
+  name: Palantir careers
+  adapter: lever
+  url: https://www.palantir.com/careers
+  config: { board: palantir }
+  company_name: Palantir
+  company_url: https://www.palantir.com
+  industry: Technology
+- slug: multiverse
+  name: Multiverse careers
+  adapter: ashby
+  url: https://www.multiverse.io/en-GB/careers
+  config: { board: multiverse }
+  company_name: Multiverse
+  company_url: https://www.multiverse.io
+  industry: Education
+- slug: lendable
+  name: Lendable careers
+  adapter: ashby
+  url: https://www.lendable.com/careers
+  config: { board: lendable }
+  company_name: Lendable
+  company_url: https://www.lendable.com
+  industry: Finance & Banking
+- slug: synthesia
+  name: Synthesia careers
+  adapter: ashby
+  url: https://www.synthesia.io/careers
+  config: { board: synthesia }
+  company_name: Synthesia
+  company_url: https://www.synthesia.io
+  industry: Technology
+- slug: elevenlabs
+  name: ElevenLabs careers
+  adapter: ashby
+  url: https://elevenlabs.io/careers
+  config: { board: elevenlabs }
+  company_name: ElevenLabs
+  company_url: https://elevenlabs.io
+  industry: Technology

@@ -1,0 +1,20 @@
+# Worker stack for any Docker host. Set DATABASE_URL etc. in worker/.env.
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+  worker:
+    build: ./worker
+    env_file: ./worker/.env
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    depends_on: [redis]
+    restart: unless-stopped
+  beat:
+    build: ./worker
+    command: celery -A openpath.tasks beat --loglevel=INFO --schedule=/tmp/celerybeat-schedule
+    env_file: ./worker/.env
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    depends_on: [redis]
+    restart: unless-stopped

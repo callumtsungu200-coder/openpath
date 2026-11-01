@@ -1,0 +1,15 @@
+{
+  "name": "openpath-local",
+  "private": true,
+  "type": "module",
+  "description": "Runs OpenPath with real Postgres (PGlite) on this machine, with no Supabase account or Docker.",
+  "scripts": {
+    "start": "node server.mjs",
+    "make-admin": "node make-admin.mjs"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "0.5.14",
+    "@electric-sql/pglite-socket": "0.2.17",
+    "pg": "^8.13.0"
+  }
+}

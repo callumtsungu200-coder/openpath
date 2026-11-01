@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* OpenPath design tokens. Every colour in the product comes from here,
+   so restyling the whole product means changing only this block. */
+@layer base {
+  :root {
+    color-scheme: dark;
+    --background: 220 56% 7%;
+    --shell: 219 50% 10%;
+    --surface: 218 44% 14%;
+    --surface-raised: 217 38% 19%;
+    --surface-inverse: 214 30% 94%;
+    --foreground: 214 40% 96%;
+    --muted-foreground: 216 18% 69%;
+    --subtle-foreground: 216 14% 58%;
+    --border: 216 30% 22%;
+    --input: 216 30% 27%;
+    --ring: 214 85% 70%;
+    --primary: 214 40% 96%;
+    --primary-foreground: 220 56% 11%;
+    --accent: 214 85% 72%;
+    --accent-foreground: 220 56% 11%;
+    --accent-soft: 214 60% 24%;
+    --success: 146 50% 58%;
+    --success-soft: 150 35% 18%;
+    --warning: 38 80% 64%;
+    --warning-soft: 36 40% 19%;
+    --danger: 2 75% 70%;
+    --danger-soft: 2 40% 21%;
+  }
+  * { @apply border-border; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-background font-sans text-foreground antialiased; font-feature-settings: 'tnum' on; }
+  h1, h2, h3 { text-wrap: balance; }
+  :focus-visible { @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background; }
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}
