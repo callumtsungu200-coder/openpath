@@ -8,14 +8,14 @@ export const DialogTrigger = DialogPrimitive.Trigger
 export const DialogTitle = DialogPrimitive.Title
 export const DialogDescription = DialogPrimitive.Description
 
-const overlayClass = 'fixed inset-0 z-50 bg-background/70 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in-0'
+const overlayClass = 'fixed inset-0 z-50 bg-black/25 backdrop-blur-sm data-[state=open]:animate-in data-[state=open]:fade-in-0'
 
 export function DialogContent({ className, children, ...props }: ComponentPropsWithoutRef<typeof DialogPrimitive.Content>) {
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className={overlayClass} />
       <DialogPrimitive.Content
-        className={cn('fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border bg-surface p-6 shadow-pop data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95', className)}
+        className={cn('fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-surface p-6 shadow-pop data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95', className)}
         {...props}
       >
         {children}
@@ -31,9 +31,10 @@ export function SheetContent({ className, children, ...props }: ComponentPropsWi
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className={overlayClass} />
       <DialogPrimitive.Content
-        className={cn('fixed inset-x-0 bottom-0 z-50 flex max-h-[88dvh] flex-col rounded-t-2xl border-t border-border bg-surface shadow-pop data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom', className)}
+        className={cn('fixed inset-x-0 bottom-0 z-50 flex max-h-[88dvh] flex-col rounded-t-[2rem] bg-surface/95 shadow-pop backdrop-blur-2xl data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom', className)}
         {...props}
       >
+        <div aria-hidden className="mx-auto mt-2 h-1.5 w-10 shrink-0 rounded-full bg-input" />
         {children}
         <CloseButton />
       </DialogPrimitive.Content>

@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 export function Checkbox({ className, ...props }: ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>) {
   return (
     <CheckboxPrimitive.Root
-      className={cn('grid size-5 shrink-0 place-items-center rounded-md border border-input bg-surface-raised/50 transition-colors data-[state=checked]:border-accent data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground', className)}
+      className={cn('grid size-5 shrink-0 place-items-center rounded-full border-[1.5px] border-input bg-surface transition-colors data-[state=checked]:border-accent data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground', className)}
       {...props}
     >
       <CheckboxPrimitive.Indicator><Check className="size-3.5" strokeWidth={3} /></CheckboxPrimitive.Indicator>

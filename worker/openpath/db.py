@@ -18,7 +18,7 @@ BACKOFF_MAX_MINUTES = 24 * 60
 
 UPSERT_COLUMNS = (
     "apply_url", "external_id", "fingerprint", "content_hash", "title", "company_name", "company_logo_url",
-    "company_url", "company_description",
+    "company_url", "company_description", "application_status",
     "category", "industry", "location", "region", "arrangement", "employment_type", "salary_min", "salary_max",
     "salary_period", "salary_text", "is_paid", "min_age", "max_age", "age_text", "deadline", "duration",
     "description", "responsibilities", "eligibility", "requirements", "programme_info", "extraction_method",

@@ -9,11 +9,12 @@ import traceback
 from . import __version__, db, fetch_rendered
 from .config import Settings, load_settings
 from .pipeline import ScanSession
-from .spiders import ApprenticeshipApiSpider, BoardApiSpider, JsonLdCrawlSpider, crawl_settings
+from .spiders import (ApprenticeshipApiSpider, BoardApiSpider, JsonLdCrawlSpider, ProgrammePagesSpider, SpringpodSpider,
+                      crawl_settings)
 
 log = logging.getLogger("openpath.scan")
 SPIDERS = {"greenhouse": BoardApiSpider, "lever": BoardApiSpider, "ashby": BoardApiSpider, "jsonld_crawl": JsonLdCrawlSpider,
-           "gov_apprenticeships": ApprenticeshipApiSpider}
+           "gov_apprenticeships": ApprenticeshipApiSpider, "springpod": SpringpodSpider, "programme_pages": ProgrammePagesSpider}
 
 
 def _run_scrapy(source: dict, session: ScanSession, settings: Settings) -> dict:
@@ -52,6 +53,8 @@ def run_scan(slug: str, settings: Settings | None = None) -> dict:
     try:
         if source["adapter"] == "gov_apprenticeships" and not settings.apprenticeship_api_key:
             outcome = {"error": "FIND_APPRENTICESHIP_API_KEY is not set"}
+        elif source["adapter"] == "futures_finder":
+            outcome = fetch_rendered.crawl_finder(source, session, settings.user_agent)
         elif source["adapter"] == "rendered":
             outcome = fetch_rendered.crawl(source, session, settings.user_agent)
         else:
@@ -61,6 +64,7 @@ def run_scan(slug: str, settings: Settings | None = None) -> dict:
             status, error = "partial", f"{session.stats['errors']} postings failed. Last: {session.last_error}"
         # Partial and failed scans never count as evidence that a posting has gone.
         session.finish_monitoring(complete=status == "success")
+        db.expire_past_deadlines(conn)
     except Exception as e:
         log.error("Scan of %s crashed\n%s", slug, traceback.format_exc())
         status, error = "failed", f"{type(e).__name__}: {e}"[:500]

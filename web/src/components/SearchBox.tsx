@@ -14,7 +14,7 @@ function useDebounced<T>(value: T, ms: number) {
   return debounced
 }
 
-export function SearchBox({ initial = '', onSearch, placeholder, large }: { initial?: string; onSearch: (q: string) => void; placeholder?: string; large?: boolean }) {
+export function SearchBox({ id, initial = '', onSearch, onValueChange, placeholder, large, bare }: { id?: string; initial?: string; onSearch: (q: string) => void; onValueChange?: (q: string) => void; placeholder?: string; large?: boolean; bare?: boolean }) {
   const [value, setValue] = useState(initial)
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState(-1)
@@ -37,6 +37,7 @@ export function SearchBox({ initial = '', onSearch, placeholder, large }: { init
 
   const submit = (q: string) => {
     setValue(q)
+    onValueChange?.(q)
     setOpen(false)
     setActive(-1)
     onSearch(q.trim())
@@ -46,6 +47,7 @@ export function SearchBox({ initial = '', onSearch, placeholder, large }: { init
     <form ref={wrapper} role="search" className="relative" onSubmit={(e) => { e.preventDefault(); submit(active >= 0 && shown[active] ? shown[active].label : value) }}>
       <SearchIcon aria-hidden className={cn('absolute left-4 top-1/2 size-5 -translate-y-1/2 text-subtle', large && 'sm:left-5')} />
       <input
+        id={id}
         role="combobox"
         aria-expanded={shown.length > 0}
         aria-controls={listId}
@@ -55,7 +57,7 @@ export function SearchBox({ initial = '', onSearch, placeholder, large }: { init
         enterKeyHint="search"
         value={value}
         placeholder={placeholder ?? 'Search by role, company or skill'}
-        onChange={(e) => { setValue(e.target.value); setOpen(true); setActive(-1) }}
+        onChange={(e) => { setValue(e.target.value); onValueChange?.(e.target.value); setOpen(true); setActive(-1) }}
         onFocus={() => setOpen(true)}
         onKeyDown={(e) => {
           if (e.key === 'ArrowDown') { e.preventDefault(); setActive((i) => Math.min(i + 1, shown.length - 1)) }
@@ -63,17 +65,17 @@ export function SearchBox({ initial = '', onSearch, placeholder, large }: { init
           if (e.key === 'Escape') setOpen(false)
         }}
         className={cn(
-          'w-full rounded-xl border border-input bg-surface-raised/50 pl-12 pr-[6.75rem] text-base text-foreground transition-colors placeholder:text-subtle hover:border-subtle/50 focus-visible:border-ring',
-          large ? 'h-14 sm:h-16 sm:pl-14 sm:pr-36 sm:text-lg' : 'h-13 h-[3.25rem]',
+          'w-full rounded-2xl border border-input bg-surface pl-12 text-base text-foreground transition-colors placeholder:text-subtle hover:border-subtle/50 focus-visible:border-ring',
+          bare ? 'h-12 pr-4 sm:text-sm' : large ? 'h-14 pr-[6.75rem] sm:h-16 sm:pl-14 sm:pr-36 sm:text-lg' : 'h-[3.25rem] pr-[6.75rem]',
         )}
       />
-      <Button type="submit" className={cn('absolute right-1.5 top-1.5 rounded-lg', large ? 'h-11 px-4 sm:h-[3.25rem] sm:px-8' : 'h-10 px-4')}>Search</Button>
+      {!bare && <Button type="submit" className={cn('absolute right-1.5 top-1.5 rounded-xl', large ? 'h-11 px-4 sm:h-[3.25rem] sm:px-8' : 'h-10 px-4')}>Search</Button>}
       {shown.length > 0 && (
-        <ul id={listId} role="listbox" className="absolute inset-x-0 top-full z-40 mt-2 overflow-hidden rounded-xl border border-border bg-surface-raised p-1.5 shadow-pop">
+        <ul id={listId} role="listbox" className="absolute inset-x-0 top-full z-40 mt-2 overflow-hidden rounded-2xl bg-surface/95 p-1.5 shadow-pop backdrop-blur-2xl">
           {shown.map((s, i) => (
             <li key={`${s.kind}-${s.label}`} role="option" aria-selected={i === active}>
               <button type="button" onClick={() => submit(s.label)}
-                className={cn('flex min-h-11 w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm hover:bg-input', i === active && 'bg-input')}>
+                className={cn('flex min-h-11 w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm hover:bg-surface-raised', i === active && 'bg-surface-raised')}>
                 {s.kind === 'company' ? <Building2 className="size-4 shrink-0 text-subtle" /> : <SearchIcon className="size-4 shrink-0 text-subtle" />}
                 <span className="truncate">{s.label}</span>
                 {s.kind === 'company' && <span className="ml-auto text-xs text-subtle">Company</span>}

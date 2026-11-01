@@ -19,6 +19,47 @@
   url: https://www.findapprenticeship.service.gov.uk
   requires_env: FIND_APPRENTICESHIP_API_KEY
   config: { page_size: 100 }
+# Work experience for school and college students. Each site's robots.txt allows this, and
+# none of it needs an account. Sites whose robots.txt disallows us are left out on purpose:
+# see docs in the README. Programme pages: only name, organisation and place are set here;
+# everything else is read from the page on each scan.
+- slug: springpod
+  name: Springpod virtual work experience
+  adapter: springpod
+  url: https://www.springpod.com
+  scan_interval_minutes: 1440
+- slug: futures-for-all
+  name: Futures For All Work Experience Finder
+  adapter: futures_finder
+  url: https://finder.futuresforall.org/opportunity-search
+  scan_interval_minutes: 720
+- slug: official-programmes
+  name: Official programme pages
+  adapter: programme_pages
+  url: https://www.imperial.ac.uk
+  scan_interval_minutes: 1440
+  config:
+    pages:
+      - { url: "https://careers.metoffice.gov.uk/early-careers/work-experience", title: "Met Office work experience", company: Met Office, location: "Online, then Exeter", region: South West, industry: Technology, company_url: "https://www.metoffice.gov.uk" }
+      - { url: "https://www.imperial.ac.uk/be-inspired/schools-outreach/secondary-schools/summer-schools/work-experience/", title: "Year 12 Work Experience Programme", company: Imperial College London, location: London, region: London, arrangement: in_person, industry: Engineering, company_url: "https://www.imperial.ac.uk" }
+      - { url: "https://www.bristol.ac.uk/study/outreach/pre-16/work-experience-year-10/", title: "Work experience placements for local Year 10 students", company: University of Bristol, location: Bristol, region: South West, arrangement: in_person, industry: Education, company_url: "https://www.bristol.ac.uk" }
+      - { url: "https://www.bristol.ac.uk/study/outreach/post-16/work-experience-year-12/", title: "Work experience placements for Year 12 (STEM)", company: University of Bristol, location: Bristol, region: South West, arrangement: in_person, industry: Engineering, company_url: "https://www.bristol.ac.uk" }
+      - { url: "https://warwick.ac.uk/fac/cross_fac/academic-development/work-experience", title: "Work Experience for Year 10 to 12 students", company: University of Warwick, location: Coventry, region: West Midlands, arrangement: in_person, industry: Education, company_url: "https://warwick.ac.uk" }
+      - { url: "https://www.cheshirefire.gov.uk/jobs/other-opportunities/work-experience", title: "Year 10 and Year 12 work experience", company: Cheshire Fire and Rescue Service, location: Cheshire, region: North West, arrangement: in_person, industry: Public Sector, company_url: "https://www.cheshirefire.gov.uk" }
+      - { url: "https://www.kingsleynapley.co.uk/careers/early-careers/work-experience/", title: "Law work experience programme", company: Kingsley Napley, location: London, region: London, arrangement: in_person, industry: Law, company_url: "https://www.kingsleynapley.co.uk" }
+      - { url: "https://careers-uk.forvismazars.com/work-experience/", title: "School leaver work experience", company: Forvis Mazars, location: UK offices, region: UK wide, industry: Finance & Banking, paid: true, pay: Paid three-day programme, company_url: "https://www.forvismazars.com/uk" }
+      - { url: "https://www.lewissilkin.com/en/life-at-ls/careers/work-experience", title: "Sixth-form work experience scheme", company: Lewis Silkin, location: London, region: London, industry: Law, company_url: "https://www.lewissilkin.com" }
+      - { url: "https://www.kpmgcareers.co.uk/apprentice/work-experience/", title: "KPMG work experience", company: KPMG, location: UK, region: UK wide, industry: Finance & Banking, company_url: "https://www.kpmgcareers.co.uk" }
+      - { url: "https://www.nnuh.nhs.uk/training-education/nnuh-skills-academy/work-experience/", title: "Work experience and Career Insight Week", company: Norfolk and Norwich University Hospitals NHS, location: Norwich, region: East of England, industry: Healthcare, company_url: "https://www.nnuh.nhs.uk" }
+      - { url: "https://www.mpft.nhs.uk/working-here/work-experience", title: "NHS work experience, including virtual", company: Midlands Partnership University NHS, location: Staffordshire and Shropshire, region: West Midlands, industry: Healthcare, company_url: "https://www.mpft.nhs.uk" }
+      - { url: "https://www.mcht.nhs.uk/work-us/work-experience", title: "NHS work experience, including virtual", company: Mid Cheshire Hospitals NHS, location: Cheshire, region: North West, industry: Healthcare, company_url: "https://www.mcht.nhs.uk" }
+      - { url: "https://www.midyorks.nhs.uk/work-experience/", title: "NHS work experience", company: Mid Yorkshire Teaching NHS Trust, location: West Yorkshire, region: Yorkshire, industry: Healthcare, company_url: "https://www.midyorks.nhs.uk" }
+      - { url: "https://www.destinationstem.org.uk/get-involved/placements", title: "STEM Research Placements", company: Destination STEM, location: See site, region: UK wide, industry: Engineering, company_url: "https://www.destinationstem.org.uk" }
+      - { url: "https://www.pinsentmasons.com/en-gb/careers/early-talent/scotland/virtual-work-experience", title: "Virtual work experience in law", company: Pinsent Masons, arrangement: remote, industry: Law, paid: false, pay: Free to join, company_url: "https://www.pinsentmasons.com" }
+      - { url: "https://www.linklaters.com/en/careers/early-careers/making-links-programme", title: "Making Links Programme", company: Linklaters, location: London, region: London, industry: Law, company_url: "https://www.linklaters.com" }
+      - { url: "https://careerready.org.uk/students/", title: "Career Ready programme with paid internship", company: Career Ready, location: Partner schools and colleges, region: UK wide, category: internship, paid: true, pay: Paid four-week internship, company_url: "https://careerready.org.uk" }
+      - { url: "https://www.rolls-royce.springpod.com/", title: "Rolls-Royce virtual career tasters", company: Rolls-Royce, arrangement: remote, industry: Engineering, paid: false, pay: Free to join, company_url: "https://www.rolls-royce.com" }
+      - { url: "https://www.socialmobility.org.uk/programme", title: "Aspiring Professionals Programme", company: Social Mobility Foundation, location: UK, region: UK wide, category: insight_programme, paid: false, pay: Free to join, company_url: "https://www.socialmobility.org.uk" }
 - slug: monzo
   name: Monzo careers
   adapter: greenhouse

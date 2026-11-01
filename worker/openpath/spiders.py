@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 
 import scrapy
 
-from . import adapters
+from . import adapters, work_experience
 from .fetch_rendered import looks_like_listing
 
 
@@ -78,6 +78,65 @@ class ApprenticeshipApiSpider(scrapy.Spider):
             401: "The API rejected FIND_APPRENTICESHIP_API_KEY",
             429: "The API's rate limit was reached",
         }.get(status, f"{failure.type.__name__}: {failure.getErrorMessage()}")[:500]
+
+
+class _PageListSpider(scrapy.Spider):
+    """Fetches a known list of pages. Any failure makes the scan partial, so monitoring
+    never mistakes a failed fetch for a listing that has gone."""
+
+    def __init__(self, source: dict, session, outcome: dict, **kwargs):
+        super().__init__(**kwargs)
+        self.source = source
+        self.session = session
+        self.outcome = outcome
+        self.failed = 0
+
+    def on_page_error(self, failure):
+        self.failed += 1
+        self.session.stats["link_errors"] += 1
+
+    def closed(self, reason):
+        if not self.outcome.get("error"):
+            self.outcome["complete"] = True
+            if self.failed:
+                self.outcome["truncated"] = True
+
+
+class SpringpodSpider(_PageListSpider):
+    name = "springpod"
+    SITEMAPS = {"virtual-work-experience.xml": work_experience.parse_springpod_programme,
+                "opportunities.xml": work_experience.parse_springpod_opportunity}
+
+    async def start(self):
+        base = self.source["url"].rstrip("/")
+        for name, parser in self.SITEMAPS.items():
+            yield scrapy.Request(f"{base}/{name}", callback=self.parse_sitemap, errback=self.on_sitemap_error,
+                                 cb_kwargs={"parser": parser}, dont_filter=True)
+
+    def on_sitemap_error(self, failure):
+        self.outcome["error"] = f"Sitemap failed: {failure.getErrorMessage()}"[:500]
+
+    def parse_sitemap(self, response, parser):
+        self.session.stats["pages"] += 1
+        for url in work_experience._sitemap_locs(response.text):
+            yield scrapy.Request(url, callback=self.parse_page, errback=self.on_page_error, cb_kwargs={"parser": parser})
+
+    def parse_page(self, response, parser):
+        self.session.stats["pages"] += 1
+        raw = parser(response.text, response.url)
+        self.session.process(raw) if raw else self.session.skip()
+
+
+class ProgrammePagesSpider(_PageListSpider):
+    name = "programme_pages"
+
+    async def start(self):
+        for page in self.source["config"]["pages"]:
+            yield scrapy.Request(page["url"], callback=self.parse_page, errback=self.on_page_error, cb_kwargs={"page": page})
+
+    def parse_page(self, response, page):
+        self.session.stats["pages"] += 1
+        self.session.process(work_experience.parse_programme_page(response.text, page, page["url"]))
 
 
 class JsonLdCrawlSpider(scrapy.Spider):

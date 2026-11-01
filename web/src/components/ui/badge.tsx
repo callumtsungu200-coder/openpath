@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 const badgeVariants = cva('inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium [&_svg]:size-3.5', {
   variants: {
     variant: {
-      neutral: 'border border-border bg-surface-raised/60 text-foreground',
+      neutral: 'bg-surface-raised text-foreground',
       accent: 'bg-accent-soft text-accent',
       success: 'bg-success-soft text-success',
       warning: 'bg-warning-soft text-warning',

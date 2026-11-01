@@ -3,7 +3,7 @@ import { forwardRef, type InputHTMLAttributes, type SelectHTMLAttributes } from 
 import { cn } from '@/lib/utils'
 
 const fieldClass =
-  'h-12 w-full rounded-xl border border-input bg-surface-raised/50 px-4 text-[15px] text-foreground transition-colors placeholder:text-subtle hover:border-subtle/50 focus-visible:border-ring disabled:opacity-50 sm:text-sm'
+  'h-12 w-full rounded-2xl border border-input bg-surface px-4 text-[15px] text-foreground transition-colors placeholder:text-subtle hover:border-subtle/50 focus-visible:border-ring disabled:opacity-50 sm:text-sm'
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(({ className, ...props }, ref) => (
   <input ref={ref} className={cn(fieldClass, className)} {...props} />

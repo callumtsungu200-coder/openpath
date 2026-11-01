@@ -15,26 +15,30 @@ from .models import Opportunity, RawPosting
 
 DESCRIPTION_LIMIT = 20000
 DEADLINE = re.compile(
-    r"(?:application deadline|closing date|applications? close[s]?(?: on)?|apply by|deadline(?: for applications)?)"
-    r"\s*(?:is|:|-|–)?\s*((?:\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]{3,9}(?:\s+\d{4})?)|(?:[A-Za-z]{3,9}\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+\d{4})?)|(?:\d{1,2}/\d{1,2}/\d{4}))",
+    r"(?:application deadline|closing date|applications? close[s]?(?: on)?|\bclose on|apply by|deadline(?: for (?:applications|submissions))?)"
+    r"\s*(?:is|was(?: the)?|:|-|–)?\s*(?:(?:mon|tues|wednes|thurs|fri|satur|sun)day,?\s+)?((?:\d{1,2}(?:st|nd|rd|th)?\s+[A-Za-z]{3,9}(?:\s+\d{4})?)|(?:[A-Za-z]{3,9}\s+\d{1,2}(?:st|nd|rd|th)?(?:,?\s+\d{4})?)|(?:\d{1,2}/\d{1,2}/\d{4}))",
     re.I,
 )
 
 
-def deadline_from(text: str | None, today: date | None = None) -> date | None:
-    if not text:
-        return None
-    m = DEADLINE.search(text)
-    if not m:
-        return None
+def deadlines_from(text: str | None, today: date | None = None) -> list[date]:
+    """Every stated deadline, in page order. Recurring programmes often list several rounds."""
     today = today or date.today()
-    try:
-        parsed = date_parser.parse(m.group(1), dayfirst=True).date()
-    except (ValueError, OverflowError):
-        return None
-    if not re.search(r"\d{4}", m.group(1)) and parsed < today:
-        parsed = parsed.replace(year=parsed.year + 1)
-    return parsed
+    found = []
+    for m in DEADLINE.finditer(text or ""):
+        try:
+            parsed = date_parser.parse(m.group(1), dayfirst=True).date()
+        except (ValueError, OverflowError):
+            continue
+        if not re.search(r"\d{4}", m.group(1)) and parsed < today:
+            parsed = parsed.replace(year=parsed.year + 1)
+        found.append(parsed)
+    return found
+
+
+def deadline_from(text: str | None, today: date | None = None) -> date | None:
+    found = deadlines_from(text, today)
+    return found[0] if found else None
 
 
 def fingerprint(company: str, title: str, location: str | None) -> str:
@@ -46,7 +50,7 @@ def fingerprint(company: str, title: str, location: str | None) -> str:
 def _content_hash(opp: Opportunity) -> str:
     keys = ("title", "company_name", "category", "industry", "location", "region", "arrangement", "salary_min",
             "salary_max", "salary_period", "salary_text", "is_paid", "deadline", "duration", "description", "min_age",
-            "max_age", "apply_url", "responsibilities", "eligibility", "requirements", "programme_info")
+            "max_age", "apply_url", "application_status", "responsibilities", "eligibility", "requirements", "programme_info")
     return hashlib.sha256(json.dumps({k: getattr(opp, k) for k in keys}, default=str).encode()).hexdigest()
 
 
@@ -120,6 +124,9 @@ def normalise(raw: RawPosting, source: dict, settings: Settings,
     elif raw.min_age is not None:
         min_age = raw.min_age
         provenance["age"] = raw.age_note or "Stated by the source"
+    if raw.max_age is not None and not age_text:
+        max_age = raw.max_age
+        provenance["age"] = raw.age_note or "Stated by the source"
 
     arrangement = classify.arrangement_from(raw.workplace, location, text)
     if arrangement:
@@ -138,6 +145,7 @@ def normalise(raw: RawPosting, source: dict, settings: Settings,
         company_logo_url=raw.logo_url,
         company_url=raw.company_url,
         company_description=raw.company_description,
+        application_status=raw.application_status,
         category=category,
         industry=raw.industry or classify.industry_for(raw.title, source.get("industry")),
         location=location,

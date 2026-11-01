@@ -3,12 +3,13 @@ import { SearchX, SlidersHorizontal, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { CardGrid, OpportunityCard, OpportunityCardSkeleton } from '@/components/OpportunityCard'
-import { SearchBox } from '@/components/SearchBox'
+import { SearchPanel } from '@/components/SearchPanel'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Dialog, DialogTitle, DialogTrigger, SheetContent } from '@/components/ui/dialog'
 import { Input, Label, Select } from '@/components/ui/input'
+import { Segmented } from '@/components/ui/segmented'
 import { EmptyState, ErrorState } from '@/components/ui/states'
 import { api } from '@/lib/api'
 import { ARRANGEMENT, CATEGORY } from '@/lib/labels'
@@ -95,12 +96,9 @@ function FilterPanel({ ctx }: { ctx: ReturnType<typeof useFilters> }) {
       <CheckGroup title="Location" options={facets?.regions ?? []} selected={filters.regions ?? []} onToggle={(v) => toggle('region', v)} />
       <CheckGroup title="Industry" options={facets?.industries ?? []} selected={filters.industries ?? []} onToggle={(v) => toggle('industry', v)} />
       <div>
-        <Label htmlFor="filter-paid">Pay</Label>
-        <Select id="filter-paid" value={params.get('paid') ?? ''} onChange={(e) => set('paid', e.target.value || undefined)}>
-          <option value="">Paid or unpaid</option>
-          <option value="true">Paid only</option>
-          <option value="false">Unpaid only</option>
-        </Select>
+        <div className="mb-2 text-sm font-medium">Pay</div>
+        <Segmented label="Pay" value={params.get('paid') ?? ''} onChange={(v) => set('paid', v || undefined)}
+          options={[{ value: '', label: 'All' }, { value: 'true', label: 'Paid' }, { value: 'false', label: 'Unpaid' }]} />
       </div>
       <div>
         <Label htmlFor="filter-age">Your age</Label>
@@ -153,13 +151,22 @@ export function SearchPage() {
   return (
     <div>
       <h1 className="text-3xl font-light tracking-tight sm:text-4xl">Find opportunities</h1>
-      <div className="mt-5 rounded-2xl border border-border bg-surface p-3 sm:p-5">
-        <SearchBox large initial={filters.q ?? ''} onSearch={(q) => set('q', q || undefined)} />
+      <div className="mt-5">
+        <SearchPanel
+          initial={{ q: filters.q, region: params.getAll('region')[0], category: params.getAll('category')[0], arrangement: params.getAll('arrangement')[0] }}
+          onSubmit={(v) => ctx.update((next) => {
+            next.delete('early')
+            for (const [key, value] of [['q', v.q], ['region', v.region], ['category', v.category], ['arrangement', v.arrangement]]) {
+              next.delete(key)
+              if (value) next.set(key, value)
+            }
+          })}
+        />
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[17.5rem_minmax(0,1fr)]">
         <aside aria-label="Filters" className="hidden lg:block">
-          <div className="rounded-2xl border border-border bg-surface p-5">
+          <div className="rounded-3xl bg-surface p-5 shadow-card">
             <div className="mb-4 flex min-h-8 items-center justify-between">
               <h2 className="font-semibold">Filters</h2>
               {filterCount > 0 && <button onClick={clear} className="text-[13px] font-medium text-accent">Clear all</button>}
@@ -170,7 +177,7 @@ export function SearchPage() {
 
         <div className="min-w-0">
           <div className="mb-4 flex flex-wrap items-center gap-3">
-            <p aria-live="polite" className="mr-auto text-sm text-muted-foreground">
+            <p aria-live="polite" className="mr-auto text-sm font-medium">
               {data ? `${formatCount(total)} ${total === 1 ? 'opportunity' : 'opportunities'}` : 'Searching'}
             </p>
             <Dialog>
@@ -183,7 +190,7 @@ export function SearchPage() {
                 {filterCount > 0 && <div className="border-t border-border p-4"><Button variant="secondary" className="w-full" onClick={clear}>Clear all filters</Button></div>}
               </SheetContent>
             </Dialog>
-            <label className="flex items-center gap-2 text-sm text-muted-foreground">
+            <label className="flex items-center gap-2 text-sm">
               <span className="max-sm:sr-only">Sort by</span>
               <Select aria-label="Sort by" value={params.get('sort') ?? (filters.q ? 'relevance' : 'newest')} onChange={(e) => set('sort', e.target.value)} className="h-11 w-44">
                 {filters.q && <option value="relevance">Best match</option>}

@@ -62,6 +62,10 @@ class ScanSession:
             self.stats["pending"] += 1
         self.stats["duplicates"] += db.detect_duplicates(self.conn, opp)
 
+    def skip(self) -> None:
+        """A listing the source no longer offers. Left out of seen_urls, so monitoring retires it."""
+        self.stats["skipped"] += 1
+
     def finish_monitoring(self, complete: bool) -> None:
         # Only a complete scan is evidence that something disappeared.
         if complete:

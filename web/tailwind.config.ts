@@ -5,9 +5,11 @@ const token = (name: string) => `hsl(var(--${name}) / <alpha-value>)`
 
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
+  future: { hoverOnlyWhenSupported: true },
   theme: {
     extend: {
-      fontFamily: { sans: ['Figtree Variable', 'system-ui', 'sans-serif'] },
+      fontFamily: { sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Inter Variable', 'system-ui', 'sans-serif'] },
+      transitionTimingFunction: { ios: 'cubic-bezier(0.32, 0.72, 0, 1)' },
       colors: {
         background: token('background'),
         shell: token('shell'),
@@ -25,7 +27,7 @@ export default {
         danger: { DEFAULT: token('danger'), soft: token('danger-soft') },
       },
       borderRadius: { sm: '0.5rem', md: '0.75rem', lg: '1rem', xl: '1.25rem', '2xl': '1.75rem', '3xl': '2.25rem' },
-      boxShadow: { card: '0 1px 2px hsl(220 60% 3% / 0.25)', pop: '0 16px 40px hsl(220 60% 3% / 0.45)' },
+      boxShadow: { card: '0 1px 2px hsl(220 30% 20% / 0.04), 0 6px 20px hsl(220 30% 20% / 0.05)', pop: '0 12px 40px hsl(220 30% 20% / 0.18)' },
       maxWidth: { shell: '92rem' },
     },
   },

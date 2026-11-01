@@ -1,4 +1,4 @@
-import '@fontsource-variable/figtree'
+import '@fontsource-variable/inter'
 import './index.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { StrictMode } from 'react'

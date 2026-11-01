@@ -34,7 +34,9 @@ class RawPosting:
     is_paid: bool | None = None
     duration: str | None = None
     min_age: int | None = None
+    max_age: int | None = None
     age_note: str | None = None
+    application_status: str | None = None
     company_url: str | None = None
     company_description: str | None = None
     responsibilities: list[str] = field(default_factory=list)
@@ -81,3 +83,4 @@ class Opportunity:
     fingerprint: str = ""
     content_hash: str = ""
     verification: str = "pending"
+    application_status: str | None = None

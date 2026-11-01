@@ -18,6 +18,9 @@ const ADAPTER_LABEL: Record<string, string> = {
   jsonld_crawl: "job data published on the employer's website",
   rendered: "job data published on the employer's website",
   gov_apprenticeships: "GOV.UK's official Find an apprenticeship service",
+  springpod: "Springpod, the platform this programme runs on",
+  futures_finder: "Futures For All's Work Experience Finder",
+  programme_pages: "the organisation's own website",
 }
 
 function Fact({ label, value, note }: { label: string; value: ReactNode | null | undefined; note?: string }) {
@@ -72,15 +75,15 @@ export function OpportunityPage() {
 
   return (
     <div>
-      <Link to="/search" className="mb-3 inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"><ArrowLeft className="size-4" />All opportunities</Link>
+      <Link to="/search" className="mb-3 inline-flex min-h-11 items-center gap-2 text-sm font-medium transition-colors hover:text-accent"><ArrowLeft className="size-4" />All opportunities</Link>
       {closed && (
-        <div role="status" className="mb-5 flex items-center gap-3 rounded-xl bg-warning-soft p-4 text-sm text-warning">
+        <div role="status" className="mb-5 flex items-center gap-3 rounded-2xl bg-warning-soft p-4 text-sm text-warning">
           <AlertTriangle className="size-4 shrink-0" />
           {o.status === 'expired' ? 'The application deadline has passed.' : 'The employer no longer lists this opportunity.'}
         </div>
       )}
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_23rem]">
-        <div className="min-w-0 space-y-8 rounded-2xl border border-border bg-surface p-5 sm:p-8">
+        <div className="min-w-0 space-y-8 rounded-3xl bg-surface p-5 shadow-card sm:p-8">
           <header>
             <div className="flex items-start gap-4">
               <CompanyLogo size="lg" name={o.company_name} src={o.company_logo_url} />
@@ -121,7 +124,7 @@ export function OpportunityPage() {
           <Card className="p-5">
             <div className="flex gap-2">
               <Button asChild className="flex-1">
-                <a href={applyUrl} target="_blank" rel="noopener noreferrer nofollow" className="min-w-0"><span className="truncate">{applyLabel(applyUrl)}</span><ExternalLink /></a>
+                <a href={applyUrl} target="_blank" rel="noopener noreferrer nofollow" className="min-w-0"><span className="truncate">{o.application_status === 'closed' ? applyLabel(applyUrl).replace('Apply on', 'Check') : applyLabel(applyUrl)}</span><ExternalLink /></a>
               </Button>
               <SaveButton id={o.id} />
             </div>
@@ -130,6 +133,7 @@ export function OpportunityPage() {
               <Fact label="Working pattern" value={o.arrangement && ARRANGEMENT[o.arrangement]} note={provenance.arrangement} />
               <Fact label="Salary" value={formatSalary(o)} note={provenance.salary} />
               <Fact label="Paid" value={o.is_paid == null ? null : o.is_paid ? 'Yes' : 'No'} note={provenance.paid} />
+              <Fact label="Applications" value={o.application_status === 'closed' ? 'Closed for now' : o.application_status === 'open' ? 'Open' : null} note={o.application_status === 'closed' ? 'Check the site for the next round' : undefined} />
               <Fact label="Deadline" value={o.deadline && formatDate(o.deadline)} note={provenance.deadline} />
               <Fact label="Age eligibility" value={formatAge(o)} note={o.age_text ? `"${o.age_text}"` : provenance.age} />
               {o.duration && <Fact label="Duration" value={o.duration} note={provenance.duration} />}

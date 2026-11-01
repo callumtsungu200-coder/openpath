@@ -133,7 +133,7 @@ ABOUT_TRAINING = re.compile(r"\b(course|training|qualification|delivery|delivere
 
 
 def arrangement_from(workplace: str | None, location: str | None, text: str | None) -> str | None:
-    declared = (workplace or "").lower().replace("-", "").replace(" ", "")
+    declared = (workplace or "").lower().replace("-", "").replace("_", "").replace(" ", "")
     if declared in {"remote", "telecommute"}:
         return "remote"
     if declared == "hybrid":
@@ -167,7 +167,7 @@ AGE_MAX = re.compile(r"\b(?:aged?|under|up to)\s*(\d{2})\s*(?:or under|or younge
 # rises" and "pension for employees aged 22+" do not limit who can apply.
 AGE_NOT_ELIGIBILITY = re.compile(
     r"\b(pay|paid|wages?|salary|per hour|hourly|an hour|£|pension|if you are|employees|funding|funded|levy|"
-    r"grants?|incentive|bursary|residing|residents?|children|pupils|learners aged|customers|clients|patients|students aged|"
+    r"grants?|incentive|bursary|residing|residents?|children|pupils|customers|clients|patients|volunteering|"
     r"supporting|support|help|helping|working with|who have|subject to)\b|£",
     re.I,
 )

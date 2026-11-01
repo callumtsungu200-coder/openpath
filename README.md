@@ -89,9 +89,21 @@ openpath scan find-an-apprenticeship
 
 The source stays paused, and is not counted as monitored, until the key is set. Employer contact details in the API are deliberately not stored. Each listing links to its GOV.UK advert and to the application page the advert names. The service covers England.
 
+### Work experience
+
+Three scanners cover school and college students, including virtual programmes:
+
+- **Springpod** (`springpod`): reads its public sitemaps and keeps programmes with a live cohort. Anything behind Springpod's free account stays there, and applicants are sent to its page.
+- **Futures For All Work Experience Finder** (`futures_finder`): visits each public listing with Playwright. Applying needs a free account on their site.
+- **Official pages** (`programme_pages`, in `sources.yaml`): organisations' own pages. Only the name, organisation and place are set by hand. Dates, ages, and whether applications are open are read from the page on every scan, and short excerpts are kept rather than whole pages.
+
+A programme's page often survives between rounds, so `application_status` says `open`, `closed`, or null when the page does not say. A past date on such a page means a closed round, not an expired listing.
+
+"Verified" here means the listing was found on that organisation's or platform's own site and rechecked by the scanner. It is not an endorsement or a safeguarding check. Sites whose `robots.txt` disallows us are deliberately not scanned, even when they run good programmes. When this was built that included The Forage, UCAS, Nuffield Research Placements, the Sutton Trust, In2scienceUK, Parliament, and several NHS trusts and law firms. Ask them for access before adding them. Springpod's terms refer to an Acceptable Use Policy that could not be found publicly, so check it with them before launch.
+
 ## Design system
 
-Tokens are in `web/src/index.css`, components in `web/src/components/ui`, and a living reference is at `/design-system`. All colours are tokens, so changing that one block restyles the whole product.
+The look is light frosted glass with black pills, combined with iOS conventions: a floating tab bar on phones, bottom sheets, segmented controls, press feedback, and San Francisco on Apple devices (Inter elsewhere). Tokens are in `web/src/index.css`, components in `web/src/components/ui`, and a living reference is at `/design-system`. All colours are tokens, so changing that one block restyles most of the product. The page background gradient also sits there, and cards turn black on hover through `group-hover` classes in `OpportunityCard.tsx`.
 
 ## Assumptions made
 

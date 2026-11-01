@@ -2,49 +2,32 @@ import { useQuery } from '@tanstack/react-query'
 import { ArrowRight, Radar, Sparkles } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { CardGrid, OpportunityCard, OpportunityCardSkeleton } from '@/components/OpportunityCard'
-import { SearchBox } from '@/components/SearchBox'
+import { SearchPanel, type PanelValues } from '@/components/SearchPanel'
 import { Card, CardTitle } from '@/components/ui/card'
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/states'
 import { api } from '@/lib/api'
 import { CATEGORY, SHORTCUT_CATEGORIES } from '@/lib/labels'
 import { isConfigured } from '@/lib/supabase'
-import type { HomeFeed } from '@/lib/types'
 import { formatCount, timeAgo } from '@/lib/utils'
 
-const SUGGESTED_SEARCHES = ['Software apprenticeship', 'Summer internship', 'Graduate scheme London', 'Marketing', 'Data analyst']
+const SUGGESTED_SEARCHES = ['Software apprenticeship', 'Summer internship', 'Graduate scheme London', 'Virtual work experience', 'Year 10 work experience']
 
 function SectionHeading({ title, to, action }: { title: string; to?: string; action?: string }) {
   return (
     <div className="mb-4 flex items-center justify-between gap-4">
       <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">{title}</h2>
-      {to && <Link to={to} className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">{action}<ArrowRight className="size-4" /></Link>}
+      {to && <Link to={to} className="inline-flex min-h-11 items-center gap-1.5 text-sm font-medium transition-colors hover:text-accent">{action}<ArrowRight className="size-4" /></Link>}
     </div>
-  )
-}
-
-function Stats({ stats }: { stats: HomeFeed['stats'] }) {
-  const items = [
-    { label: 'Live opportunities', value: formatCount(stats.active) },
-    { label: 'Employers', value: formatCount(stats.companies) },
-    { label: 'Found in the last 7 days', value: formatCount(stats.discovered_7d) },
-    { label: 'Sites monitored', value: formatCount(stats.sources_monitored) },
-  ]
-  return (
-    <dl className="grid grid-cols-2 gap-x-6 gap-y-5 border-t border-border pt-6 sm:grid-cols-4">
-      {items.map((s) => (
-        <div key={s.label}>
-          <dt className="text-[13px] text-muted-foreground">{s.label}</dt>
-          <dd className="mt-1 text-2xl font-semibold tracking-tight">{s.value}</dd>
-        </div>
-      ))}
-    </dl>
   )
 }
 
 export function HomePage() {
   const navigate = useNavigate()
   const { data, isLoading, error, refetch } = useQuery({ queryKey: ['home'], queryFn: api.home, enabled: isConfigured })
-  const go = (q: string) => navigate(q ? `/search?q=${encodeURIComponent(q)}` : '/search')
+  const go = (v: Partial<PanelValues>) => {
+    const params = new URLSearchParams(Object.entries(v).filter(([, value]) => value) as [string, string][])
+    navigate(`/search${params.size ? `?${params}` : ''}`)
+  }
   const counts = new Map(data?.categories.map((c) => [c.category, c.count]))
 
   return (
@@ -53,20 +36,18 @@ export function HomePage() {
         <h1 className="max-w-4xl text-4xl font-light leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
           Every UK opportunity, found at the source.
         </h1>
-        <p className="mt-4 max-w-2xl text-base text-muted-foreground sm:text-lg">
-          OpenPath scans employers' own websites for apprenticeships, internships, graduate schemes and jobs, then rechecks them so you are not applying to dead listings.
-        </p>
-        {data?.stats.last_scan_at && (
-          <p className="mt-3 inline-flex items-center gap-2 text-sm text-subtle">
-            <span aria-hidden className="size-2 rounded-full bg-success" />
-            Last scan finished {timeAgo(data.stats.last_scan_at)}
+        {data && (
+          <p className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-sm text-muted-foreground sm:text-base">
+            <span>{formatCount(data.stats.active)} live opportunities</span>
+            <span>{formatCount(data.stats.companies)} employers</span>
+            {data.stats.last_scan_at && <span>Last scan {timeAgo(data.stats.last_scan_at)}</span>}
           </p>
         )}
-        <div className="mt-7 rounded-2xl border border-border bg-surface p-3 sm:p-5">
-          <SearchBox large onSearch={go} />
+        <div className="mt-7">
+          <SearchPanel onSubmit={go} />
           <div className="mt-3 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] sm:flex-wrap">
             {SUGGESTED_SEARCHES.map((s) => (
-              <button key={s} onClick={() => go(s)} className="min-h-9 shrink-0 rounded-full border border-border px-3.5 text-[13px] text-muted-foreground transition-colors hover:border-input hover:bg-surface-raised hover:text-foreground">
+              <button key={s} onClick={() => go({ q: s })} className="min-h-9 shrink-0 rounded-full bg-white/60 px-3.5 text-[13px] font-medium transition-all duration-200 ease-ios active:scale-95 hover:bg-white">
                 {s}
               </button>
             ))}
@@ -79,10 +60,10 @@ export function HomePage() {
           {SHORTCUT_CATEGORIES.map((c) => {
             const { plural, icon: Icon } = CATEGORY[c]
             return (
-              <Link key={c} to={`/search?category=${c}`} className="rounded-xl border border-border bg-surface p-4 transition-colors hover:border-accent/50 hover:bg-surface-raised/60">
-                <Icon aria-hidden className="size-5 text-accent" />
+              <Link key={c} to={`/search?category=${c}`} className="rounded-2xl bg-surface p-4 shadow-card transition-all duration-200 ease-ios active:scale-[0.97] hover:bg-primary hover:text-primary-foreground">
+                <Icon aria-hidden className="size-5" />
                 <div className="mt-3 text-sm font-medium leading-tight">{plural}</div>
-                <div className="mt-1 text-xs text-subtle">{data ? formatCount(counts.get(c) ?? 0) : ' '}</div>
+                <div className="mt-1 text-xs opacity-70">{data ? formatCount(counts.get(c) ?? 0) : ' '}</div>
               </Link>
             )
           })}
@@ -153,7 +134,6 @@ export function HomePage() {
               </ul>
             </Card>
           </section>
-          <Stats stats={data.stats} />
         </>
       )}
     </div>

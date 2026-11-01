@@ -22,7 +22,7 @@ function TopNav() {
           key={item.to}
           to={item.to}
           end={'end' in item}
-          className={({ isActive }) => cn('rounded-full px-5 py-3 text-sm font-medium transition-colors', isActive ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground')}
+          className={({ isActive }) => cn('rounded-full px-5 py-3 text-sm font-medium transition-colors', isActive ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-white/50')}
         >
           {item.label}
         </NavLink>
@@ -42,8 +42,8 @@ function AccountButton() {
   }
   return (
     <div className="flex items-center gap-2">
-      <span title={user.email} className="grid size-11 place-items-center rounded-full bg-surface-raised text-muted-foreground"><User className="size-4" /></span>
-      <Button variant="ghost" size="icon" aria-label="Sign out" onClick={signOut}><LogOut /></Button>
+      <span title={user.email} className="grid size-11 place-items-center rounded-full bg-surface text-foreground shadow-card"><User className="size-4" /></span>
+      <Button variant="secondary" size="icon" aria-label="Sign out" onClick={signOut}><LogOut /></Button>
     </div>
   )
 }
@@ -56,10 +56,10 @@ function SideRail() {
     ...(isAdmin ? [{ to: '/admin', label: 'Admin', icon: Gauge }] : []),
   ]
   return (
-    <nav aria-label="Shortcuts" className="fixed bottom-10 left-[max(1.25rem,calc((100vw-92rem)/2+1.25rem))] z-20 hidden flex-col gap-3 2xl:flex">
+    <nav aria-label="Shortcuts" className="fixed bottom-12 left-[max(2.75rem,calc((100vw-92rem)/2+1.25rem))] z-20 hidden flex-col gap-3 xl:flex">
       {items.map((item) => (
         <NavLink key={item.to} to={item.to} aria-label={item.label} title={item.label}
-          className={({ isActive }) => cn('grid size-12 place-items-center rounded-full border border-border transition-colors', isActive ? 'bg-primary text-primary-foreground' : 'bg-surface text-muted-foreground hover:text-foreground')}>
+          className={({ isActive }) => cn('grid size-12 place-items-center rounded-full shadow-card transition-all duration-200 ease-ios active:scale-95', isActive ? 'bg-primary text-primary-foreground' : 'bg-surface text-foreground')}>
           <item.icon className="size-[18px]" />
         </NavLink>
       ))}
@@ -70,10 +70,10 @@ function SideRail() {
 function BottomNav() {
   const { isAdmin } = useAuth()
   return (
-    <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-30 flex border-t border-border bg-shell/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
+    <nav aria-label="Main" className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-30 flex gap-1 rounded-full border border-white/70 bg-white/75 p-1.5 shadow-pop backdrop-blur-2xl lg:hidden">
       {[...NAV, ...(isAdmin ? [{ to: '/admin', label: 'Admin', icon: Gauge }] : [])].map((item) => (
         <NavLink key={item.to} to={item.to} end={'end' in item}
-          className={({ isActive }) => cn('flex min-h-14 flex-1 flex-col items-center justify-center gap-1 text-[11px] font-medium', isActive ? 'text-foreground' : 'text-subtle')}>
+          className={({ isActive }) => cn('flex min-h-[3.25rem] flex-1 flex-col items-center justify-center gap-0.5 rounded-full text-[11px] font-medium transition-all duration-200 ease-ios active:scale-95', isActive ? 'bg-black/[0.07] text-accent' : 'text-foreground')}>
           <item.icon className="size-5" />
           {item.label === 'Find opportunities' ? 'Search' : item.label}
         </NavLink>
@@ -89,23 +89,23 @@ export function Layout() {
   }, [pathname])
   return (
     <div className="min-h-dvh sm:p-4 lg:p-6">
-      <div className="mx-auto min-h-[calc(100dvh-3rem)] max-w-shell rounded-none border-border bg-shell sm:rounded-3xl sm:border">
+      <div className="mx-auto min-h-[calc(100dvh-3rem)] max-w-shell rounded-none bg-shell/60 backdrop-blur-2xl sm:rounded-[2.5rem] sm:border sm:border-white/50">
         <header className="flex items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-10 lg:py-6">
           <Logo />
           <TopNav />
           <AccountButton />
         </header>
-        <SideRail />
-        <main className="px-4 pb-24 pt-2 sm:px-6 lg:px-10 lg:pb-12 2xl:pl-24">
+        <main className="px-4 pb-28 pt-2 sm:px-6 lg:px-10 lg:pb-12 xl:pl-24">
           <ErrorBoundary key={pathname}>
             <Outlet />
           </ErrorBoundary>
         </main>
-        <footer className="hidden px-10 pb-8 text-xs text-subtle lg:flex lg:justify-between 2xl:pl-24">
+        <footer className="hidden px-10 pb-8 text-xs text-muted-foreground lg:flex lg:justify-between xl:pl-24">
           <span>OpenPath finds opportunities on employers' own sites. Always confirm details with the employer before applying.</span>
           <Link to="/design-system" className="hover:text-foreground">Design system</Link>
         </footer>
       </div>
+      <SideRail />
       <BottomNav />
     </div>
   )

@@ -35,6 +35,7 @@ export interface Opportunity {
   apply_url: string | null
   extraction_method: 'structured' | 'rules' | 'ai' | 'admin'
   field_provenance: Record<string, string>
+  application_status: 'open' | 'closed' | null
   status: 'active' | 'expired' | 'removed' | 'duplicate' | 'rejected'
   verification: 'verified' | 'pending' | 'failed'
   discovered_at: string

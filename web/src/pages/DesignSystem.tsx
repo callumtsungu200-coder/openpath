@@ -39,7 +39,7 @@ export function DesignSystemPage() {
           <p className="text-5xl font-light tracking-tight">Display</p>
           <p className="mt-3 text-2xl font-semibold tracking-tight">Section heading</p>
           <p className="mt-3 text-xl font-semibold tracking-tight">Card title</p>
-          <p className="mt-3 text-[15px]">Body text in Figtree</p>
+          <p className="mt-3 text-[15px]">Body text: San Francisco on Apple devices, Inter elsewhere</p>
           <p className="mt-2 text-sm text-muted-foreground">Secondary text</p>
           <p className="mt-2 text-xs text-subtle">Caption text</p>
         </Block>

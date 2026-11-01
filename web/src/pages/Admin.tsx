@@ -34,7 +34,7 @@ function StatusBadge({ status }: { status: ScanStatus | null }) {
 function Stat({ label, value, icon: Icon, tone, onClick }: { label: string; value: number; icon: typeof Radar; tone?: 'danger' | 'warning'; onClick?: () => void }) {
   const urgent = tone && value > 0
   return (
-    <button onClick={onClick} className="rounded-2xl border border-border bg-surface p-5 text-left transition-colors hover:border-accent/50 hover:bg-surface-raised/60">
+    <button onClick={onClick} className="rounded-3xl bg-surface p-5 text-left shadow-card transition-all duration-200 ease-ios active:scale-[0.98] hover:bg-surface-raised">
       <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
         <Icon aria-hidden className={cn('size-4', urgent && (tone === 'danger' ? 'text-danger' : 'text-warning'))} />{label}
       </div>
@@ -43,12 +43,12 @@ function Stat({ label, value, icon: Icon, tone, onClick }: { label: string; valu
   )
 }
 
-const SERIES = { success: 'hsl(214 85% 72%)', failed: 'hsl(2 75% 70%)', created: 'hsl(214 85% 72%)' }
+const SERIES = { success: 'hsl(var(--primary))', failed: 'hsl(var(--danger))', created: 'hsl(var(--primary))' }
 
 function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: { name: string; value: number; color: string }[]; label?: string }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="rounded-lg border border-border bg-surface-raised p-3 text-xs shadow-pop">
+    <div className="rounded-2xl bg-surface p-3 text-xs shadow-pop">
       <div className="mb-1.5 font-medium">{label && formatDate(label)}</div>
       {payload.map((p) => (
         <div key={p.name} className="flex items-center gap-2 text-muted-foreground">
@@ -257,7 +257,7 @@ export default function AdminPage() {
       <div role="tablist" className="-mx-4 mb-6 flex gap-1 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0">
         {TABS.map((t) => (
           <button key={t} role="tab" aria-selected={tab === t} onClick={() => setTab(t)}
-            className={cn('min-h-11 shrink-0 rounded-full px-4 text-sm font-medium transition-colors', tab === t ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground')}>
+            className={cn('min-h-11 shrink-0 rounded-full px-4 text-sm font-medium transition-colors', tab === t ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-white/50')}>
             {t}
             {t === 'Review' && data && data.counts.pending > 0 && ` (${data.counts.pending})`}
             {t === 'Duplicates' && data && data.counts.duplicates_open > 0 && ` (${data.counts.duplicates_open})`}
